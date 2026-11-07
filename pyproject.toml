@@ -1,0 +1,101 @@
+[project]
+name = "flask-ecommerce-api"
+version = "0.1.0"
+description = "API de E-commerce robusta utilizando Flask, Docker e PostgreSQL"
+authors = [
+    { name = "Seu Nome", email = "seu.email@exemplo.com" }
+]
+readme = "README.md"
+requires-python = ">=3.12, <3.14"
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Framework :: Flask",
+    "Operating System :: POSIX :: Linux",
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+plugins = [
+    "sqlalchemy.ext.mypy.plugin"
+]
+
+exclude = ["migrations"]
+
+[[tool.mypy.overrides]]
+module = "app.modules.*"
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = [
+    "flask_migrate.*",
+    "apiflask.*",
+    "webargs.*",
+    "marshmallow.*"
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "app.tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "app.routes"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "app.modules.*"
+warn_return_any = false
+
+[tool.ruff]
+src = ["app"]
+target-version = "py312"
+line-length = 88
+exclude = [
+    ".venv",
+    "venv",
+    "migrations"
+]
+
+[tool.ruff.format]
+indent-style = "space"
+quote-style = "double"
+exclude = ["migrations"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # Erros do Pycodestyle (PEP 8)
+    "W",    # Avisos do Pycodestyle (PEP 8)
+    "F",    # Pyflakes (Lógica e variáveis não usadas)
+    "I",    # Isort (Ordenação automática de Imports)
+    "B",    # Bugbear (Práticas ruins de design e performance)
+    "C4",   # Comprehensions (Melhorias de escrita de coleções)
+    "UP",   # Pyupgrade (Força o uso da sintaxe moderna do Python 3.12)
+    "S",    # Bandit (Análise de SEGURANÇA para API - detecta SQL Injection, senhas expostas, etc.)
+]
+ignore = [
+    "S101" # Permite o uso de 'assert' em arquivos de testes (comum em Pytest)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"*.md" = ["E999", "E501"]
+"app/tests/**" = ["S101", "S105", "S106", "S107"] # Garante que a regra de segurança não reclame de asserts nos testes
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+combine-as-imports = true
+lines-after-imports = 1
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[dependency-groups]
+dev = [
+    "locust>=2.47.0",
+    "pre-commit>=4.7.0",
+    "mypy>=1.10.0",
+    "types-Flask>=1.1.6", # Tipagens auxiliares para o ecossistema Flask
+]
